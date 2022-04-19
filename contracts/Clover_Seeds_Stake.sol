@@ -142,6 +142,7 @@ contract Clover_Seeds_Stake is Ownable {
                 totalClaimedRewards = totalClaimedRewards.add(pendingDivs);
                 emit RewardsTransferred(account, pendingDivs);
             } else {
+                ///buggg in marketing fee
                 require(IContract(Seeds_Token).sendToken2Account(account, afterFee), "Can't transfer tokens!");
                 require(IContract(Seeds_Token).sendToken2Account(marketingWallet, marketingFee), "Can't transfer tokens.");
                 totalEarnedTokens[account] = totalEarnedTokens[account].add(afterFee);

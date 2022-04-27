@@ -1,4 +1,4 @@
-pragma solidity 0.8.13;
+pragma solidity 0.8.12;
 
 // SPDX-License-Identifier: MIT
 
@@ -20,6 +20,8 @@ contract Clover_Seeds_NFT is ERC721, ERC721Enumerable, ERC721URIStorage, Pausabl
     mapping (address => uint[]) ownerNFTs;
     mapping (uint => uint) tokenIndex;
     uint32 public minted;
+
+    address public Clover_Seeds_Constructor;
 
     address public Clover_Seeds_Picker;
 
@@ -64,6 +66,18 @@ contract Clover_Seeds_NFT is ERC721, ERC721Enumerable, ERC721URIStorage, Pausabl
         
         require(IContract(Clover_Seeds_Picker).randomLayer(tokenId), "SEED NFT: Unable to call randomLayer..");
         require(IContract(Controller).addMintedTokenId(tokenId), "SEED NFT: Unable to call addMintedTokenId..");
+    }
+
+    function setConstructor(address _address) public onlyOwner {
+        Clover_Seeds_Constructor = _address;
+    }
+    function freeMint(address to, uint256 tokenId, string memory uri) public {
+        require(msg.sender == Clover_Seeds_Constructor, "You are not constructor!");
+        minted++;
+        _mint(to, tokenId);
+        ownerNFTs[to].push(tokenId);
+        tokenIndex[tokenId] = ownerNFTs[to].length - 1;
+        _setTokenURI(tokenId, uri);
     }
 
     function setTokenURI(uint256 tokenId, string memory uri) public {

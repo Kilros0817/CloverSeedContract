@@ -1,4 +1,4 @@
-pragma solidity 0.8.13;
+pragma solidity 0.8.12;
 
 // SPDX-License-Identifier: MIT
 
@@ -16,8 +16,7 @@ contract Clover_Seeds_Token is IBEP20, Auth, Pausable {
 
     address DEAD = 0x000000000000000000000000000000000000dEaD;
     address ZERO = 0x0000000000000000000000000000000000000000;
-    // address ROUTER = 0x10ED43C718714eb63d5aA57B78B54704E256024E; //mainnet
-    address ROUTER = 0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3; // testnet
+    address ROUTER = 0x10ED43C718714eb63d5aA57B78B54704E256024E;
 
     string constant _name = "SEED";
     string constant _symbol = "SEED$";

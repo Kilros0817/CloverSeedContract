@@ -1,4 +1,4 @@
-pragma solidity 0.8.13;
+pragma solidity 0.8.12;
 
 // SPDX-License-Identifier: MIT
 
@@ -40,10 +40,9 @@ contract Clover_Seeds_Stake is Ownable {
     address public Clover_Seeds_Picker;
 
     address public marketingWallet;
-
     
     bool public isStakingEnabled = false;
-    bool public isMarketingFeeActivated = false;
+    bool public isMarketingFeeActiveted = false;
     bool public canClaimReward = false;
 
     EnumerableSet.AddressSet private CloverDiamondFieldAddresses;
@@ -72,7 +71,6 @@ contract Clover_Seeds_Stake is Ownable {
     mapping (address => uint256) public lastClaimedTime;
     mapping (address => uint256) public lastWatered;
     mapping (address => uint256) public wastedTime;
-    mapping (address => bool) public noMarketingList;
 
     IterableMapping.Map private _owners;
     // mapping(uint256 => address) private _owners;
@@ -135,20 +133,19 @@ contract Clover_Seeds_Stake is Ownable {
 
         require(_lastWatered <= waterInterval, "Please give water your plant..");
         
-        if (pendingDivs > 0) {
-            if (!isMarketingFeeActivated || noMarketingList[account]) {
-                require(IContract(Seeds_Token).sendToken2Account(account, pendingDivs), "Can't transfer tokens!");
-                totalEarnedTokens[account] = totalEarnedTokens[account].add(pendingDivs);
-                totalClaimedRewards = totalClaimedRewards.add(pendingDivs);
-                emit RewardsTransferred(account, pendingDivs);
-            } else {
-                ///buggg in marketing fee
-                require(IContract(Seeds_Token).sendToken2Account(account, afterFee), "Can't transfer tokens!");
-                require(IContract(Seeds_Token).sendToken2Account(marketingWallet, marketingFee), "Can't transfer tokens.");
-                totalEarnedTokens[account] = totalEarnedTokens[account].add(afterFee);
-                totalClaimedRewards = totalClaimedRewards.add(afterFee);
-                emit RewardsTransferred(account, afterFee);
-            }
+        if (pendingDivs > 0 && !isMarketingFeeActiveted) {
+            require(IContract(Seeds_Token).sendToken2Account(account, pendingDivs), "Can't transfer tokens!");
+            totalEarnedTokens[account] = totalEarnedTokens[account].add(pendingDivs);
+            totalClaimedRewards = totalClaimedRewards.add(pendingDivs);
+            emit RewardsTransferred(account, pendingDivs);
+        }
+
+        if (pendingDivs > 0 && isMarketingFeeActiveted) {
+            require(IContract(Seeds_Token).sendToken2Account(account, afterFee), "Can't transfer tokens!");
+            require(IContract(Seeds_Token).sendToken2Account(marketingWallet, marketingFee), "Can't transfer tokens.");
+            totalEarnedTokens[account] = totalEarnedTokens[account].add(afterFee);
+            totalClaimedRewards = totalClaimedRewards.add(afterFee);
+            emit RewardsTransferred(account, afterFee);
         }
 
         lastClaimedTime[account] = block.timestamp;
@@ -535,11 +532,11 @@ contract Clover_Seeds_Stake is Ownable {
     }
 
     function enableMarketingFee() public onlyOwner {
-        isMarketingFeeActivated = true;
+        isMarketingFeeActiveted = true;
     }
 
     function disableMarketingFee() public onlyOwner {
-        isMarketingFeeActivated = false;
+        isMarketingFeeActiveted = false;
     }
 
     function setClover_Seeds_Picker(address _Clover_Seeds_Picker) public onlyOwner {
@@ -650,9 +647,5 @@ contract Clover_Seeds_Stake is Ownable {
         potPearl = CloverPotPearlRewardRate;
         potRuby = CloverPotRubyRewardRate;
         potDiamond = CloverPotDiamondRewardRate;
-    }
-
-    function setNoMarketingAddress(address acc) public onlyOwner {
-        noMarketingList[acc] = true;
     }
 }

@@ -22,7 +22,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  */
 module.exports = {
   solidity: {
-    version: "0.8.13",
+    version: "0.8.12",
     settings: {
       optimizer: {
         enabled: true,
@@ -32,7 +32,7 @@ module.exports = {
   paths: {
     artifacts: './src/artifacts'
   },
-  defaultNetwork: "binance_testnet",
+  defaultNetwork: "binance_mainnet",
   networks: {
     hardhat: {},
     binance_testnet: {
@@ -49,6 +49,7 @@ module.exports = {
   etherscan: {
     apiKey: {
       bscTestnet :"Z6I6T31HFWKTBNB476KTM87ANWCS4MK8FS",
+      bsc : "Z6I6T31HFWKTBNB476KTM87ANWCS4MK8FS"
     }
   }
 };
